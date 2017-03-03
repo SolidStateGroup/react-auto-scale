@@ -24,7 +24,8 @@ export default class AutoScale extends Component {
     this.state = {
       wrapperSize: { width: 0, height: 0 },
       contentSize: { width: 0, height: 0 },
-      scale: 1,
+      scaleX: 1,
+      scaleY: 1,
     };
   }
 
@@ -57,34 +58,37 @@ export default class AutoScale extends Component {
     const { maxHeight, maxWidth, maxScale } = this.props;
     const { wrapperSize, contentSize } = newState;
 
-    let scale = (wrapperSize.width / contentSize.width);
+    let scaleX = wrapperSize.width / contentSize.width;
+		let scaleY = wrapperSize.height / contentSize.height;
 
     if (maxHeight) {
-      scale = Math.min(scale, (maxHeight / contentSize.height));
+      scaleY = Math.min(scale, maxHeight / contentSize.height);
     }
     if (maxWidth) {
-      scale = Math.min(scale, (maxWidth / contentSize.width));
+      scaleX = Math.min(scale, maxWidth / contentSize.width);
     }
     if (maxScale) {
-      scale = Math.min(scale, maxScale);
+      scaleX = Math.min(scale, maxScale);
+      scaleY = scaleX;
     }
 
     this.setState({
       ...newState,
-      scale,
+      scaleX,
+      scaleY
     });
   }
 
   render() {
-    const { scale, contentSize } = this.state;
+    const { scaleX, scaleY, contentSize } = this.state;
     const { children, wrapperClass, containerClass, contentClass } = this.props;
-    const containerHeight = (scale * contentSize.height);
-    const containerWidth = (scale * contentSize.width);
+    const containerHeight = (scaleY * contentSize.height);
+    const containerWidth = (scaleX * contentSize.width);
 
     return (
-      <div ref="wrapper" className={wrapperClass}>
+      <div ref="wrapper" className={wrapperClass} style={{ height: '100%' }}>
         <div ref="container" className={containerClass} style={{ maxWidth: '100%', overflow: 'hidden', width: containerWidth + 'px', height: containerHeight + 'px' }}>
-          <div ref="content" className={contentClass} style={{ transform: 'scale(' + scale + ')', transformOrigin: '0 0 0' }}>
+          <div ref="content" className={contentClass} style={{ transform: 'scale(' + scaleX + ', ' + scaleY + ')', transformOrigin: '0 0 0', width: (100 / scaleX) + '%' }}>
             {React.Children.only(children)}
           </div>
         </div>
