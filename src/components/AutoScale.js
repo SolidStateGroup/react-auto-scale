@@ -59,7 +59,7 @@ export default class AutoScale extends Component {
     const { wrapperSize, contentSize } = newState;
 
     let scaleX = wrapperSize.width / contentSize.width;
-		let scaleY = wrapperSize.height / contentSize.height;
+    let scaleY = wrapperSize.height / contentSize.height;
 
     if (maxHeight) {
       scaleY = Math.min(scaleY, maxHeight / contentSize.height);
